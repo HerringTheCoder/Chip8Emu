@@ -1,10 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chip8Emu", "Chip8Emu\Chip8Emu.csproj", "{5F0941D9-DE4E-41B4-AAF2-CF78D24A478D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chip8Emu.Core", "Chip8Emu.Core\Chip8Emu.Core.csproj", "{4D905EDA-8C86-4615-BE14-62622DC894F2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chip8Emu.DebugTool", "Chip8Emu.DebugTool\Chip8Emu.DebugTool.csproj", "{77E4D7DA-9F6C-4663-9569-FA63BD5686F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chip8Emu.SDL", "Chip8Emu.SDL\Chip8Emu.SDL.csproj", "{4AC4407B-87A0-45CF-8A8B-310B1E2BCE40}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,10 +12,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5F0941D9-DE4E-41B4-AAF2-CF78D24A478D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5F0941D9-DE4E-41B4-AAF2-CF78D24A478D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5F0941D9-DE4E-41B4-AAF2-CF78D24A478D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5F0941D9-DE4E-41B4-AAF2-CF78D24A478D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4D905EDA-8C86-4615-BE14-62622DC894F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4D905EDA-8C86-4615-BE14-62622DC894F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D905EDA-8C86-4615-BE14-62622DC894F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -24,5 +20,9 @@ Global
 		{77E4D7DA-9F6C-4663-9569-FA63BD5686F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77E4D7DA-9F6C-4663-9569-FA63BD5686F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77E4D7DA-9F6C-4663-9569-FA63BD5686F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AC4407B-87A0-45CF-8A8B-310B1E2BCE40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AC4407B-87A0-45CF-8A8B-310B1E2BCE40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AC4407B-87A0-45CF-8A8B-310B1E2BCE40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AC4407B-87A0-45CF-8A8B-310B1E2BCE40}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

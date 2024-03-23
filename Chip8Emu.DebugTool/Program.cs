@@ -4,14 +4,37 @@ using Chip8Emu.Core;
 
 Console.WriteLine("Hello, World!");
 
-var emulator = new Emulator();
+var emulator = new Emulator(tickRate: 60);
 
-var stream = File.OpenRead(Path.Combine(Directory.GetCurrentDirectory(), "IBM_Logo.ch8"));
-var debugBuffer = new byte[256];
+// var file = "IBM_Logo.ch8";
+// var file = "pong.ch8";
+// var file = "chip8_audio.ch8"; No sound is played
+// var file = "keshaWasBiird.ch8"; 64Kb rom
+var file = "glitchGhost.ch8";
+
+var stream = File.OpenRead(Path.Combine(Directory.GetCurrentDirectory(), file));
+var debugBuffer = new byte[4096];
 var debugStream = new MemoryStream(debugBuffer, true);
 stream.CopyTo(debugStream);
 stream.Position = 0;
 emulator.LoadProgram(stream);
-stream.Dispose();
+emulator.DisplayUpdated += EmulatorOnDisplayUpdated;
 
-await emulator.RunProgram(500, CancellationToken.None);
+void EmulatorOnDisplayUpdated(object? sender, EventArgs e)
+{
+    Console.Clear();
+    Console.WriteLine("\x1b[3J");
+    var states = emulator.Display.GetStates();
+    for (int y = 0; y < 32; y++)
+    {
+        for (int x = 0; x < 64; x++)
+        {
+            Console.Write(states[x, y] ? "#" : " ");
+        }
+    
+        Console.WriteLine();
+    }
+}
+
+stream.Dispose();
+await emulator.RunAsync(operationsPerSecond: 500, CancellationToken.None);

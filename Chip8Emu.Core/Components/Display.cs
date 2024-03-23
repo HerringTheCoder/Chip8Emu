@@ -2,7 +2,16 @@
 
 public class Display
 {
-    public bool[,] States { get; } = new bool[64, 32];
+    public bool[,] GetStates()
+    {
+        lock (StatesLock)
+        {
+            return _states;
+        }
+    } 
+    
+    private readonly bool[,] _states = new bool[64, 32];
+    private readonly object StatesLock = new object();
     private const int SpriteWidth = 8;
 
     internal Display()
@@ -34,12 +43,12 @@ public class Display
                 //Mask spriteByte with 0x1 so only the rightmost bit stays
                 var spriteState = Convert.ToBoolean(shiftedSpriteByte & 0x1);
                 
-                var currentState = States[wrappedX + currentWidth, wrappedY + currentHeight];
+                var currentState = _states[wrappedX + currentWidth, wrappedY + currentHeight];
 
                 if (currentState && spriteState)
                     flipOccured = true;
 
-                States[wrappedX + currentWidth, wrappedY + currentHeight] = currentState ^ spriteState;
+                _states[wrappedX + currentWidth, wrappedY + currentHeight] = currentState ^ spriteState;
             }
         }
 
@@ -48,6 +57,6 @@ public class Display
 
     public void ClearScreen()
     {
-        Array.Clear(States, 0, States.Length);
+        Array.Clear(_states, 0, _states.Length);
     }
 }

@@ -7,7 +7,7 @@ public class Memory
     private readonly byte[] _currentMemory = new byte[0x1000]; //4Kb
 
     //First 512 bytes are empty for compatibility with older programs
-    public readonly (int Start, int End) UserSpace = new(0x200, 0xFFF);
+    public readonly (ushort Start, ushort End) UserSpace = new(0x200, 0xFFF);
     private const int FontsStartingAddress = 0x0;
 
     internal Memory()
@@ -15,26 +15,26 @@ public class Memory
         Buffer.BlockCopy(Fonts.Data, 0, _currentMemory, FontsStartingAddress, Fonts.Data.Length);
     }
 
-    public byte[] GetSprite(int address, int offset)
+    public byte[] GetSprite(ushort address, int offset)
     {
         return _currentMemory[new Range(address, address + offset)];
     }
 
-    public void WriteByte(int address, byte value)
+    public void WriteByte(ushort address, byte value)
     {
         ValidateAddress(address);
 
         _currentMemory[address] = value;
     }
 
-    public byte ReadByte(int address)
+    public byte ReadByte(ushort address)
     {
         ValidateAddress(address);
 
         return _currentMemory[address];
     }
 
-    public ushort ReadWord(int startIndex)
+    public ushort ReadWord(ushort startIndex)
     {
         // Ensure that there are at least two bytes remaining in the array
         if (startIndex + 1 >= _currentMemory.Length)
@@ -65,9 +65,9 @@ public class Memory
         }
     }
 
-    private void ValidateAddress(int address)
+    private void ValidateAddress(ushort address)
     {
-        if (address >= UserSpace.Start && address <= UserSpace.End)
+        if (address <= UserSpace.Start || address > UserSpace.End)
             throw new ArgumentOutOfRangeException(
                 nameof(address),
                 address,
