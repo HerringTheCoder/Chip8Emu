@@ -9,25 +9,7 @@ namespace Chip8Emu.Core;
 
 public partial class Emulator
 {
-    public IDictionary<byte, Action<Operation>> Commands => new Dictionary<byte, Action<Operation>>
-    {
-        { 0x0, SpecialCommand },
-        { 0x1, JumpToAddressNNN },
-        { 0x2, CallSubroutine },
-        { 0x3, SkipNextInstructionIfVxEqNN },
-        { 0x4, SkipNextInstructionIfVxNeqNN },
-        { 0x5, SkipNextInstructionIfVxEqVy },
-        { 0x6, SetVxRegister },
-        { 0x7, AddNNToVxNoCarry },
-        { 0x8, SetVx },
-        { 0x9, SkipNextInstructionIfVxNeqVy },
-        { 0xA, SetIRegisterToNNN },
-        { 0xB, JumpToAddressV0PlusNNN },
-        { 0xC, SetVxToRandAndNN },
-        { 0xD, DisplaySprite },
-        { 0xE, SkipNextInstructionBasedOnKeyState },
-        { 0xF, HandleFGroupOperation }
-    };
+    public readonly IDictionary<byte, Action<Operation>> Commands;
 
     private void SpecialCommand(Operation op)
     {

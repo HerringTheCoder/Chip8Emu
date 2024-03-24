@@ -7,7 +7,7 @@ if (SDL.SDL_Init(SDL.SDL_INIT_VIDEO) < 0)
     Console.WriteLine($"There was an issue initilizing SDL. {SDL.SDL_GetError()}");
 }
 
-var window = SDL.SDL_CreateWindow("SDL .NET 6 Tutorial", SDL.SDL_WINDOWPOS_UNDEFINED, SDL.SDL_WINDOWPOS_UNDEFINED, 640, 480, SDL.SDL_WindowFlags.SDL_WINDOW_SHOWN);
+var window = SDL.SDL_CreateWindow("Chip8Emu", SDL.SDL_WINDOWPOS_UNDEFINED, SDL.SDL_WINDOWPOS_UNDEFINED, 640*2, 480*2, SDL.SDL_WindowFlags.SDL_WINDOW_SHOWN);
 
 if (window == IntPtr.Zero)
 {
@@ -24,17 +24,18 @@ if (renderer == IntPtr.Zero)
     Console.WriteLine($"There was an issue creating the renderer. {SDL.SDL_GetError()}");
 }
 
-// if (SDL_image.IMG_Init(SDL_image.IMG_InitFlags.IMG_INIT_PNG) == 0)
-// {
-//     Console.WriteLine($"There was an issue initilizing SDL2_Image {SDL_image.IMG_GetError()}");
-// }
+if (SDL_image.IMG_Init(SDL_image.IMG_InitFlags.IMG_INIT_PNG) == 0)
+{
+    Console.WriteLine($"There was an issue initilizing SDL2_Image {SDL_image.IMG_GetError()}");
+}
 
 var emulator = new Emulator(tickRate: 60);
 
-var file = "IBM_Logo.ch8";
-// var file = "pong.ch8";
-// // var file = "chip8_audio.ch8"; No sound is played
-// // var file = "keshaWasBiird.ch8"; 64Kb rom
+// var file = "IBM_Logo.ch8";
+var file = "pong.ch8";
+// var file = "tetris.ch8";
+// var file = "chip8_audio.ch8"; //No sound is played
+// var file = "keshaWasBiird.ch8"; 64Kb rom
 // var file = "glitchGhost.ch8";
 
 var stream = File.OpenRead(Path.Combine(Directory.GetCurrentDirectory(), "Roms", file));
@@ -50,23 +51,22 @@ emulator.ExceptionOccured += (sender, eventArgs) =>
 
 void EmulatorOnDisplayUpdated(object? sender, EventArgs e)
 {
-    var states = emulator.Display.GetStates();
-    Console.Clear();
-    Console.WriteLine("\x1b[3J");
-    for (int y = 0; y < 32; y++)
-    {
-        for (int x = 0; x < 64; x++)
-        {
-            Console.Write(states[x, y] ? "#" : " ");
-        }
+    // Console.Clear();
+    // Console.WriteLine("\x1b[3J");
+    // for (int y = 0; y < 32; y++)
+    // {
+    //     for (int x = 0; x < 64; x++)
+    //     {
+    //         Console.Write(emulator.Display.States[x, y] ? "#" : " ");
+    //     }
+    //
+    //     Console.WriteLine();
+    // }
     
-        Console.WriteLine();
-    }
-    
-    Renderer.RenderStates(renderer, states);
+    Renderer.RenderStates(renderer, emulator.Display);
 }
 
-emulator.RunAsync(400, cts.Token);
+Task.Run(() => emulator.RunAsync(cyclesPerSecond:800, operationsPerCycle:1, cts.Token));
 
 // Main loop for the program
 while (running && !cts.IsCancellationRequested)
@@ -80,7 +80,7 @@ while (running && !cts.IsCancellationRequested)
                 running = false;
                 break;
             case SDL.SDL_EventType.SDL_KEYDOWN:
-                emulator.PressedKeyValue = (byte?)SDL.SDL_GetKeyName(e.key.keysym.sym)[0];
+                emulator.PressedKeyValue = (byte?)(SDL.SDL_GetKeyName(e.key.keysym.sym)[0] - 48);
                 break;
         }
     }

@@ -15,11 +15,11 @@ public class Memory
         Buffer.BlockCopy(Fonts.Data, 0, _currentMemory, FontsStartingAddress, Fonts.Data.Length);
     }
 
-    public byte[] GetSprite(ushort address, int offset)
+    public ReadOnlySpan<byte> GetSprite(ushort address, int offset)
     {
-        return _currentMemory[new Range(address, address + offset)];
+        return _currentMemory.AsSpan(new Range(address, address + offset));
     }
-
+    
     public void WriteByte(ushort address, byte value)
     {
         ValidateAddress(address);

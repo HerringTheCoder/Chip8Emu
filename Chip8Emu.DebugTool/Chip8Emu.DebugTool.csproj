@@ -12,19 +12,19 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="IBM_Logo.ch8">
+      <None Update="Roms\chip8_audio.ch8">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="pong.ch8">
+      <None Update="Roms\glitchGhost.ch8">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="chip8_audio.ch8">
+      <None Update="Roms\IBM_Logo.ch8">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="keshaWasBiird.ch8">
+      <None Update="Roms\keshaWasBiird.ch8">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="glitchGhost.ch8">
+      <None Update="Roms\pong.ch8">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>

@@ -12,7 +12,7 @@ var emulator = new Emulator(tickRate: 60);
 // var file = "keshaWasBiird.ch8"; 64Kb rom
 var file = "glitchGhost.ch8";
 
-var stream = File.OpenRead(Path.Combine(Directory.GetCurrentDirectory(), file));
+var stream = File.OpenRead(Path.Combine(Directory.GetCurrentDirectory(), "Roms", file));
 var debugBuffer = new byte[4096];
 var debugStream = new MemoryStream(debugBuffer, true);
 stream.CopyTo(debugStream);
@@ -24,12 +24,11 @@ void EmulatorOnDisplayUpdated(object? sender, EventArgs e)
 {
     Console.Clear();
     Console.WriteLine("\x1b[3J");
-    var states = emulator.Display.GetStates();
     for (int y = 0; y < 32; y++)
     {
         for (int x = 0; x < 64; x++)
         {
-            Console.Write(states[x, y] ? "#" : " ");
+            Console.Write(emulator.Display.States[x, y] ? "#" : " ");
         }
     
         Console.WriteLine();
@@ -37,4 +36,4 @@ void EmulatorOnDisplayUpdated(object? sender, EventArgs e)
 }
 
 stream.Dispose();
-await emulator.RunAsync(operationsPerSecond: 500, CancellationToken.None);
+await emulator.RunAsync(cyclesPerSecond: 500, operationsPerCycle: 5, CancellationToken.None);

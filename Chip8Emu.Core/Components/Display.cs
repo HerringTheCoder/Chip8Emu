@@ -2,16 +2,9 @@
 
 public class Display
 {
-    public bool[,] GetStates()
-    {
-        lock (StatesLock)
-        {
-            return _states;
-        }
-    } 
-    
-    private readonly bool[,] _states = new bool[64, 32];
-    private readonly object StatesLock = new object();
+    public const int Width = 128;
+    public const int Height = 64;
+    public readonly bool[,] States = new bool[Width, Height];
     private const int SpriteWidth = 8;
 
     internal Display()
@@ -25,10 +18,10 @@ public class Display
     /// <param name="y"></param>
     /// <param name="spriteData"></param>
     /// <returns>True if bit flip occured, otherwise false</returns>
-    public bool DrawSprite(int x, int y,  byte[] spriteData)
+    public bool DrawSprite(int x, int y,  ReadOnlySpan<byte> spriteData)
     {
-        int wrappedX = x % 64;
-        int wrappedY = y % 32;
+        int wrappedX = x % Width;
+        int wrappedY = y % Height;
         bool flipOccured = false;
 
         for (var currentHeight = 0; currentHeight < spriteData.Length; currentHeight++)
@@ -43,12 +36,12 @@ public class Display
                 //Mask spriteByte with 0x1 so only the rightmost bit stays
                 var spriteState = Convert.ToBoolean(shiftedSpriteByte & 0x1);
                 
-                var currentState = _states[wrappedX + currentWidth, wrappedY + currentHeight];
+                var currentState = States[wrappedX + currentWidth, wrappedY + currentHeight];
 
                 if (currentState && spriteState)
                     flipOccured = true;
 
-                _states[wrappedX + currentWidth, wrappedY + currentHeight] = currentState ^ spriteState;
+                States[wrappedX + currentWidth, wrappedY + currentHeight] = currentState ^ spriteState;
             }
         }
 
@@ -57,6 +50,6 @@ public class Display
 
     public void ClearScreen()
     {
-        Array.Clear(_states, 0, _states.Length);
+        Array.Clear(States, 0, States.Length);
     }
 }

@@ -12,19 +12,17 @@ public partial class Emulator
     public Stack<ushort> Stack { get; } = new();
     public ushort ProgramCounter { get; private set; }
     public const ushort ProgramCounterStep = 2;
-    public byte? PressedKeyValue = null;
-    public bool IsKeyLockActive = false;
     public AsyncTimer DelayTimer { get; }
     public AsyncTimer SoundTimer { get; }
-
-    public event EventHandler DisplayUpdated;
+    public byte? PressedKeyValue = null;
+    public event EventHandler DisplayUpdated = null!;
 
     protected virtual void OnDisplayUpdated(EventArgs e)
     {
         DisplayUpdated?.Invoke(this, e);
     }
 
-    public event EventHandler ExceptionOccured;
+    public event EventHandler ExceptionOccured = null!;
 
     protected virtual void OnExceptionOccured(EventArgs e)
     {
@@ -36,6 +34,26 @@ public partial class Emulator
         DelayTimer = new AsyncTimer(tickRate);
         SoundTimer = new AsyncTimer(tickRate);
         ProgramCounter = Memory.UserSpace.Start;
+
+        Commands = new Dictionary<byte, Action<Operation>>
+        {
+            { 0x0, SpecialCommand },
+            { 0x1, JumpToAddressNNN },
+            { 0x2, CallSubroutine },
+            { 0x3, SkipNextInstructionIfVxEqNN },
+            { 0x4, SkipNextInstructionIfVxNeqNN },
+            { 0x5, SkipNextInstructionIfVxEqVy },
+            { 0x6, SetVxRegister },
+            { 0x7, AddNNToVxNoCarry },
+            { 0x8, SetVx },
+            { 0x9, SkipNextInstructionIfVxNeqVy },
+            { 0xA, SetIRegisterToNNN },
+            { 0xB, JumpToAddressV0PlusNNN },
+            { 0xC, SetVxToRandAndNN },
+            { 0xD, DisplaySprite },
+            { 0xE, SkipNextInstructionBasedOnKeyState },
+            { 0xF, HandleFGroupOperation }
+        };
     }
 
     public void LoadProgram(Stream stream)
@@ -44,31 +62,35 @@ public partial class Emulator
         Debug.WriteLine("Program loaded successfully");
     }
 
-    public async Task RunAsync(int operationsPerSecond, CancellationToken cancellationToken)
+    public async Task RunAsync(int cyclesPerSecond, int operationsPerCycle, CancellationToken cancellationToken)
     {
-        var pauseInterval = TimeSpan.FromSeconds(1.0 / operationsPerSecond);
-
         try
         {
             await Task.WhenAll(
-                MainLoopTask(pauseInterval, cancellationToken),
+                MainLoopTask(cyclesPerSecond, operationsPerCycle, cancellationToken),
                 RefreshDisplayTask(cancellationToken),
                 UpdateSoundStateTask(cancellationToken));
         }
-        catch(AggregateException ex)
+        catch (AggregateException ex)
         {
-            Debug.WriteLine(ex.InnerExceptions);
+            Debug.WriteLine(ex.InnerExceptions.Select(x => x.Message));
             throw;
+        }
+        catch (Exception ex)
+        { 
+            Debug.WriteLine(ex.Message);
         }
     }
 
-    public async Task MainLoopTask(TimeSpan pauseInterval, CancellationToken cancellationToken)
+    public async Task MainLoopTask(int cyclesPerSecond, int operationsPerCycle, CancellationToken cancellationToken)
     {
+        var cpuInterval = TimeSpan.FromSeconds(1.0 / cyclesPerSecond);
+
         while (!cancellationToken.IsCancellationRequested)
         {
             try
             {
-                if (!IsKeyLockActive)
+                for (int i = 0; i < operationsPerCycle; i++)
                 {
                     var instruction = Memory.ReadWord(ProgramCounter);
                     DecodeAndExecuteInstruction(instruction);
@@ -76,15 +98,14 @@ public partial class Emulator
                     Debug.WriteLine($"Moving ProgramCounter to address: {ProgramCounter}");
                 }
 
-                await Task.Delay(pauseInterval, cancellationToken);
+                await Task.Delay(cpuInterval, cancellationToken);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Main loop exception catched with message {Exception}", ex);
+                Debug.WriteLine("Main loop exception caught with message {Exception}", ex.Message);
                 OnExceptionOccured(new ErrorEventArgs(ex));
                 throw;
             }
-            
         }
     }
 
@@ -103,10 +124,9 @@ public partial class Emulator
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("DisplayTask exception catched!");
+                Debug.WriteLine("DisplayTask exception caught!");
                 throw;
             }
-            
         }
     }
 
@@ -126,13 +146,12 @@ public partial class Emulator
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("SoundStateTask exception catched!");
+                Debug.WriteLine("SoundStateTask exception caught!");
                 throw;
             }
-            
         }
     }
-    
+
 
     private void DecodeAndExecuteInstruction(ushort instruction)
     {
