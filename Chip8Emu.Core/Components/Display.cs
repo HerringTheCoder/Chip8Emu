@@ -2,8 +2,8 @@
 
 public class Display
 {
-    public const int Width = 69;
-    public const int Height = 32;
+    public const int Width = 128;
+    public const int Height = 64;
     public readonly bool[,] States = new bool[Width, Height];
     private const int SpriteWidth = 8;
 

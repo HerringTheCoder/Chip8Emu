@@ -31,7 +31,7 @@ if (SDL_image.IMG_Init(SDL_image.IMG_InitFlags.IMG_INIT_PNG) == 0)
 
 var emulator = new Emulator(tickRate: 60);
 
-var file = "tetris.ch8";
+var file = "glitchGhost.ch8";
 // var file = "test_opcode.ch8";
 
 var stream = File.OpenRead(Path.Combine(Directory.GetCurrentDirectory(), "Roms", file));
@@ -62,7 +62,7 @@ void EmulatorOnDisplayUpdated(object? sender, EventArgs e)
     Renderer.RenderStates(renderer, emulator.Display);
 }
 
-Task.Run(() => emulator.RunAsync(cyclesPerSecond:800, operationsPerCycle:1, cts.Token));
+Task.Run(() => emulator.RunAsync(cyclesPerSecond:1000, operationsPerCycle:1, cts.Token));
 
 // Main loop for the program
 while (running && !cts.IsCancellationRequested)
@@ -77,6 +77,9 @@ while (running && !cts.IsCancellationRequested)
                 break;
             case SDL.SDL_EventType.SDL_KEYDOWN:
                 emulator.PressedKeyValue = (byte?)(SDL.SDL_GetKeyName(e.key.keysym.sym)[0] - 48);
+                break;
+            case SDL.SDL_EventType.SDL_KEYUP:
+                emulator.PressedKeyValue = null;
                 break;
         }
     }

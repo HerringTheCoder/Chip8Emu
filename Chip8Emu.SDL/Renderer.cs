@@ -5,9 +5,9 @@ namespace Chip8Emu.SDL;
 
 public static class Renderer
 {
-    private const int SizeMultiplier = 10;
-    private const int ScreenWidth = 64;
-    private const int ScreenHeight = 32;
+    private const int SizeMultiplier = 1;
+    private const int ScreenWidth = 128;
+    private const int ScreenHeight = 64;
     private const int WindowWidth = ScreenWidth * SizeMultiplier;
     private const int WindowHeight = ScreenHeight * SizeMultiplier;
 

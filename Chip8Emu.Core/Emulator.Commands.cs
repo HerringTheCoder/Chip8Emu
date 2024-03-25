@@ -134,7 +134,7 @@ public partial class Emulator
 
     private void SetVxToRandAndNN(Operation op)
     {
-        Registers.V[op.X] = (byte)Random.Shared.Next(MinValue + op.NN, MaxValue + op.NN);
+        Registers.V[op.X] = (byte)(Random.Shared.Next(0, 256) & op.NN);
     }
 
     private void DisplaySprite(Operation op)
