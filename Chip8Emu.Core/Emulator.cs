@@ -166,7 +166,7 @@ public partial class Emulator
         );
 
         var command = Commands[operation.OpCode];
-        Debug.WriteLine($"Invoking command: {command.Method.Name} with instruction: {instruction:X} {operation}");
+        Debug.WriteLine($"{instruction:X} - Invoking command: {command.Method.Name} with operation - {operation}");
         command.Invoke(operation);
     }
 

@@ -55,7 +55,7 @@ public partial class Emulator
 
     private void SkipNextInstructionIfVxEqVy(Operation op)
     {
-        if (Registers.V[op.Y] == Registers.V[op.X])
+        if (Registers.V[op.X] == Registers.V[op.Y])
             SkipNextInstruction();
     }
 
@@ -139,8 +139,8 @@ public partial class Emulator
 
     private void DisplaySprite(Operation op)
     {
-        Registers.V[0xF] = 0;
         var sprite = Memory.GetSprite(Registers.I, op.N);
+        Registers.V[0xF] = 0;
 
         if (Display.DrawSprite(Registers.V[op.X], Registers.V[op.Y], sprite))
             Registers.V[0xF] = 1;
@@ -196,24 +196,21 @@ public partial class Emulator
                 break;
             case 0x33:
                 var vxValue = Registers.V[op.X];
-                for (int i = 0; i < 3; i++)
-                {
-                    byte digit = (byte)(vxValue % 10);
-                    Memory.WriteByte((ushort)(Registers.I + i), digit);
-                }
-
+                Memory.WriteByte(Registers.I, (byte)(vxValue / 100));
+                Memory.WriteByte(Registers.I.Add(1), (byte)(vxValue /10 % 10));
+                Memory.WriteByte(Registers.I.Add(2), (byte)(vxValue % 10));
                 break;
             case 0x55:
-                for (int i = 0; i < op.X; i++)
+                for (int i = 0; i <= op.X; i++)
                 {
                     Memory.WriteByte((ushort)(Registers.I + i), Registers.V[i]);
                 }
 
                 break;
             case 0x65:
-                for (int i = 0; i < op.X; i++)
+                for (int i = 0; i <= op.X; i++)
                 {
-                    Registers.V[i] = Memory.ReadByte((ushort)(Registers.I + 1));
+                    Registers.V[i] = Memory.ReadByte((ushort)(Registers.I + i));
                 }
 
                 break;

@@ -31,12 +31,8 @@ if (SDL_image.IMG_Init(SDL_image.IMG_InitFlags.IMG_INIT_PNG) == 0)
 
 var emulator = new Emulator(tickRate: 60);
 
-// var file = "IBM_Logo.ch8";
-var file = "pong.ch8";
-// var file = "tetris.ch8";
-// var file = "chip8_audio.ch8"; //No sound is played
-// var file = "keshaWasBiird.ch8"; 64Kb rom
-// var file = "glitchGhost.ch8";
+var file = "tetris.ch8";
+// var file = "test_opcode.ch8";
 
 var stream = File.OpenRead(Path.Combine(Directory.GetCurrentDirectory(), "Roms", file));
 emulator.LoadProgram(stream);
