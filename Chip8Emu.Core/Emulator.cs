@@ -95,7 +95,7 @@ public partial class Emulator
                     var instruction = Memory.ReadWord(ProgramCounter);
                     DecodeAndExecuteInstruction(instruction);
                     ProgramCounter += ProgramCounterStep;
-                    Debug.WriteLine($"Moving ProgramCounter to address: {ProgramCounter}");
+                    Debug.WriteLine("Moving ProgramCounter to address: {0}", ProgramCounter);
                 }
 
                 await Task.Delay(cpuInterval, cancellationToken);
@@ -145,7 +145,7 @@ public partial class Emulator
                 SoundTimer.Counter--;
             }
             catch (Exception ex)
-            {
+            {  
                 Debug.WriteLine("SoundStateTask exception caught!");
                 throw;
             }
@@ -166,7 +166,7 @@ public partial class Emulator
         );
 
         var command = Commands[operation.OpCode];
-        Debug.WriteLine($"{instruction:X} - Invoking command: {command.Method.Name} with operation - {operation}");
+        Debug.WriteLine("{0:X} - Invoking command: {1} with operation - {2}", instruction, command.Method.Name, operation);
         command.Invoke(operation);
     }
 
