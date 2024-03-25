@@ -1,13 +1,14 @@
 # Chip8 emulator written in C#
 The aim of this project is to study retro emulation and low level hardware architectures.
  
-Current version supports about 30 CPU instructions, multi-threaded timers and SDL renderer for video.
-So far it boots into most of the games I've tested, except for 'modern' titles that require >4Kb of memory.
+Current version supports all 36 CPU instructions, multi-threaded timers and SDL renderer for video.
+So far it plays most of the games I've tested, except for 'modern' titles that require >4Kb of memory.
 
 The current goals:
-- Bugfixing
-- User input
+- User input improvements
 - Sound output
+- Window scaling
+- Configurable CPU speed
 - Rom loading via desktop application
 
 Links that I found particularly useful:
