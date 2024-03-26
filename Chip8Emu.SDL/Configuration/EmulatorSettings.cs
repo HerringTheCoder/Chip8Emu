@@ -10,7 +10,7 @@ public class EmulatorSettings
     public int WindowWidth { get; set; }
     public int WindowHeight { get; set; }
     public int GpuTickRate { get; set; }
-    public string Filename { get; set; } = null!;
+    public string RomPath { get; set; } = null!;
     public IDictionary<SDL_Keycode, byte> Keymap { get; set; } = null!;
     public LogLevel LogLevel { get; set; }
 }

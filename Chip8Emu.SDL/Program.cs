@@ -2,8 +2,6 @@
 using Chip8Emu.SDL;
 using Chip8Emu.SDL.Configuration;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using SDL2;
 using static SDL2.SDL;
 
 var configuration = new ConfigurationBuilder()
@@ -15,43 +13,14 @@ var emulatorSettings = new EmulatorSettings();
 configuration.GetSection("EmulatorSettings").Bind(emulatorSettings);
 var logger = LoggerHelper.GetLogger<Emulator>(emulatorSettings.LogLevel);
 
-if (SDL_Init(SDL_INIT_VIDEO) < 0)
-{
-    logger.LogCritical("There was an issue initializing SDL. {SDL_GetError()}", SDL_GetError());
-}
-
-var window = SDL_CreateWindow("Chip8Emu",
-    SDL_WINDOWPOS_UNDEFINED,
-    SDL_WINDOWPOS_UNDEFINED,
-    w: emulatorSettings.WindowWidth,
-    h: emulatorSettings.WindowHeight,
-    SDL_WindowFlags.SDL_WINDOW_SHOWN);
-
-if (window == IntPtr.Zero)
-{
-    logger.LogCritical("There was an issue creating the window. {SDL_GetError()}", SDL_GetError());
-}
-
-var renderer = SDL_CreateRenderer(window,
-    -1,
-    SDL_RendererFlags.SDL_RENDERER_ACCELERATED |
-    SDL_RendererFlags.SDL_RENDERER_PRESENTVSYNC);
-
-if (renderer == IntPtr.Zero)
-{
-    logger.LogCritical("There was an issue creating the renderer. {SDL_GetError()}", SDL_GetError());
-}
-
-if (SDL_image.IMG_Init(SDL_image.IMG_InitFlags.IMG_INIT_PNG) == 0)
-{
-    logger.LogCritical("There was an issue initializing SDL2_Image {SDL_image.IMG_GetError()}",
-        SDL_image.IMG_GetError());
-}
-
+var (renderer, window) = Renderer.InitializeRendererAndWindow(logger, emulatorSettings);
 var emulator = new Emulator(tickRate: emulatorSettings.GpuTickRate, logger);
 var keyboardMapper = new KeyboardMapper(emulatorSettings.Keymap);
-var file = emulatorSettings.Filename;
-var stream = File.OpenRead(Path.Combine(Directory.GetCurrentDirectory(), "Roms", file));
+var romPath = Path.IsPathRooted(emulatorSettings.RomPath)
+    ? Path.Combine(emulatorSettings.RomPath)
+    : Path.Combine(Directory.GetCurrentDirectory(), emulatorSettings.RomPath);
+
+var stream = File.OpenRead(romPath);
 emulator.LoadProgram(stream);
 
 var cts = new CancellationTokenSource();
@@ -65,7 +34,7 @@ emulator.ExceptionOccured += (_, _) =>
 
 Task.Run(() => emulator.RunAsync(emulatorSettings.CyclesPerSecond, emulatorSettings.OperationsPerCycle, cts.Token));
 
-// Main loop for the program
+// Main SDL loop
 while (running && !cts.IsCancellationRequested)
 {
     while (SDL_PollEvent(out SDL_Event e) == 1)
@@ -89,7 +58,4 @@ while (running && !cts.IsCancellationRequested)
     }
 }
 
-// Clean up
-SDL_DestroyRenderer(renderer);
-SDL_DestroyWindow(window);
-SDL_Quit();
+Renderer.Destroy(renderer, window);
