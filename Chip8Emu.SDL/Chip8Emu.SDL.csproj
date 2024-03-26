@@ -12,9 +12,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="Roms\pong.ch8">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
       <None Update="Roms\IBM_Logo.ch8">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>

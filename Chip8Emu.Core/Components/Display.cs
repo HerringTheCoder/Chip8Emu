@@ -2,8 +2,8 @@
 
 public class Display
 {
-    public const int Width = 128;
-    public const int Height = 64;
+    public const int Width = 64;
+    public const int Height = 32;
     public readonly bool[,] States = new bool[Width, Height];
     private const int SpriteWidth = 8;
 
@@ -30,6 +30,8 @@ public class Display
             
             for (var currentWidth = 0; currentWidth < SpriteWidth; currentWidth++)
             {
+                if (wrappedX + currentWidth > Width - 1 || wrappedY + currentHeight > Height - 1)
+                    continue;
                 //Shift spriteByte so the currently analyzed bit is the rightmost one
                 var shiftedSpriteByte = spriteByte >> (SpriteWidth - currentWidth - 1);
                 
