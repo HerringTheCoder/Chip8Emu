@@ -1,5 +1,8 @@
 # Chip8 emulator written in C#
+<img width="500" alt="image" src="https://github.com/HerringTheCoder/Chip8Emu/assets/44547474/43b9ea94-a513-4bdc-a076-c8985760d4d9">
+
 The aim of this project is to study retro emulation and low level hardware architectures.
+For the time being it does not aim for ease of use (though it's mostly configurable) or full compatibility.
  
 Current version supports all 36 CPU instructions, multi-threaded timers and SDL renderer for video.
 So far it plays most of the games I've tested, except for 'modern' titles that require >4Kb of memory.
@@ -48,9 +51,9 @@ Default configuration I've used to test glitch ghost game:
 }
 ``` 
 
-Parts that are still missing:
-- Sound output
-- Rom loading via desktop application
+Parts that could be improved:
+- Rom loading and configuration via GUI
+- Sound output, the code is mostly there, but I didn't bother coupling SDL Mixer
 
 Links that I found particularly useful:
 - https://tobiasvl.github.io/blog/write-a-chip-8-emulator  
