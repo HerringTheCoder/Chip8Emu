@@ -42,9 +42,7 @@ public class Memory
             throw new ArgumentException("The byte array does not contain enough elements to form a word value.");
         }
         
-        ushort result = BitConverter.ToUInt16(new []{_currentMemory[startIndex + 1], _currentMemory[startIndex]});
-
-        return result;
+        return (ushort)(_currentMemory[startIndex] << 8 | _currentMemory[startIndex + 1]);
     }
 
     public void LoadProgram(Stream stream)

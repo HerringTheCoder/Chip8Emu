@@ -1,10 +1,11 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using Chip8Emu.Core;
+using Chip8Emu.DebugTool;
 
 Console.WriteLine("Hello, World!");
 
-var emulator = new Emulator(tickRate: 60);
+var emulator = new Emulator(tickRate: 60, LoggerHelper.GetLogger<Emulator>());
 
 // var file = "IBM_Logo.ch8";
 // var file = "pong.ch8";

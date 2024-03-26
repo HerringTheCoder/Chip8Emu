@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Chip8Emu.Core.Components;
 using Chip8Emu.Core.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace Chip8Emu.Core;
 
@@ -29,8 +30,11 @@ public partial class Emulator
         ExceptionOccured.Invoke(this, e);
     }
 
-    public Emulator(int tickRate)
+    private readonly ILogger<Emulator> _logger;
+
+    public Emulator(int tickRate, ILogger<Emulator> logger)
     {
+        _logger = logger;
         DelayTimer = new AsyncTimer(tickRate);
         SoundTimer = new AsyncTimer(tickRate);
         ProgramCounter = Memory.UserSpace.Start;
@@ -59,17 +63,21 @@ public partial class Emulator
     public void LoadProgram(Stream stream)
     {
         Memory.LoadProgram(stream);
-        Debug.WriteLine("Program loaded successfully");
+        _logger.LogDebug("Program loaded successfully");
     }
 
     public async Task RunAsync(int cyclesPerSecond, int operationsPerCycle, CancellationToken cancellationToken)
     {
+        Task[] tasks =
+        [
+            MainLoopTask(cyclesPerSecond, operationsPerCycle, cancellationToken),
+            RefreshDisplayTask(cancellationToken),
+            UpdateSoundStateTask(cancellationToken)
+        ];
+        
         try
         {
-            await Task.WhenAll(
-                MainLoopTask(cyclesPerSecond, operationsPerCycle, cancellationToken),
-                RefreshDisplayTask(cancellationToken),
-                UpdateSoundStateTask(cancellationToken));
+            await Task.WhenAll(tasks);
         }
         catch (AggregateException ex)
         {
@@ -95,7 +103,7 @@ public partial class Emulator
                     var instruction = Memory.ReadWord(ProgramCounter);
                     DecodeAndExecuteInstruction(instruction);
                     ProgramCounter += ProgramCounterStep;
-                    Debug.WriteLine("Moving ProgramCounter to address: {0}", ProgramCounter);
+                    _logger.LogDebug("Moving ProgramCounter to address: {ProgramCounter}", ProgramCounter);
                 }
 
                 await Task.Delay(cpuInterval, cancellationToken);
@@ -132,7 +140,7 @@ public partial class Emulator
 
     public async Task UpdateSoundStateTask(CancellationToken cancellationToken)
     {
-        while (await SoundTimer.Clock.WaitForNextTickAsync(cancellationToken))
+        while (await SoundTimer.Clock.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false))
         {
             try
             {
@@ -166,7 +174,7 @@ public partial class Emulator
         );
 
         var command = Commands[operation.OpCode];
-        Debug.WriteLine("{0:X} - Invoking command: {1} with operation - {2}", instruction, command.Method.Name, operation);
+        _logger.LogDebug("{Instruction:X} - Invoking command: {CommandMethodName} with operation - {Operation}", instruction, command.Method.Name, operation);
         command.Invoke(operation);
     }
 
