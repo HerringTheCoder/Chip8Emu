@@ -63,7 +63,8 @@ Default configuration I've used to test glitch ghost game:
 
 Parts that could be improved:
 - Rom loading and configuration via GUI
-- Sound output, the code is mostly there, but I didn't bother coupling SDL Mixer
+- Sound output, the code is mostly there, but I didn't bother coupling SDL Mixer yet
+- Image flickering countermeasures
 
 Links that I found particularly useful:
 - https://tobiasvl.github.io/blog/write-a-chip-8-emulator  
