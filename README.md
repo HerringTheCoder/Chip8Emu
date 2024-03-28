@@ -1,11 +1,20 @@
 # Chip8 emulator written in C#
-<img width="500" alt="image" src="https://github.com/HerringTheCoder/Chip8Emu/assets/44547474/43b9ea94-a513-4bdc-a076-c8985760d4d9">
-
 The aim of this project is to study retro emulation and low level hardware architectures.
-For the time being it does not aim for ease of use (though it's mostly configurable) or full compatibility.
- 
-Current version supports all 36 CPU instructions, multi-threaded timers and SDL renderer for video.
+For the time being it does not aim for ease of use (though it's mostly configurable) or full compatibility.  
+
+Current version includes:
+- All 36 CPU instructions emulated along with correct memory, registers and stack behavior
+- Multi-threaded timers
+- GPU accelerated renderer and upscaling
+- Configurable (although a bit cumbersome) keybinds, cpu speed, resolution
 So far it plays most of the games I've tested, except for 'modern' titles that require >4Kb of memory.
+
+'Ghost glitch' rom  
+<img width="400" alt="image" src="https://github.com/HerringTheCoder/Chip8Emu/assets/44547474/43b9ea94-a513-4bdc-a076-c8985760d4d9">
+
+Cpu test rom  
+<img width="400" alt="image" src="https://github.com/HerringTheCoder/Chip8Emu/assets/44547474/031c1968-ece6-49da-bc9b-6501bbeea274">
+
 
 You can configure some of the parameters by modifying appsettings.json file:
 - CyclesPerSecond (Max: 1000) and OperationsPerCycle (Max: Not yet defined, but I've tested it using value of 100000) control your execution speed.
