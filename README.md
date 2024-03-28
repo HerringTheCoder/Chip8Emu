@@ -7,7 +7,8 @@ Current version includes:
 - Multi-threaded timers
 - GPU accelerated renderer and upscaling
 - Configurable (although a bit cumbersome) keybinds, cpu speed, resolution
-So far it plays most of the games I've tested, except for 'modern' titles that require >4Kb of memory.
+  
+So far it seems to play most of the games I've tested, except for 'modern' titles that require >4Kb of memory.
 
 'Ghost glitch' rom  
 <img width="400" alt="image" src="https://github.com/HerringTheCoder/Chip8Emu/assets/44547474/43b9ea94-a513-4bdc-a076-c8985760d4d9">
